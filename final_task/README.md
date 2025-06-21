@@ -14,9 +14,9 @@
 [Ссылка на документацию](https://yandex.cloud/ru/docs/data-transfer/tutorials/ydb-to-object-storage)
 
 Создал табличку для данных с [kaggle](https://www.kaggle.com/datasets)
-  <details>
-    <summary><i>DDL скрипт</i></summary>
-    
+
+####DDL скрипт
+```    
     CREATE TABLE transactions_v2 (
           msno Utf8,
           payment_method_id Int32,
@@ -29,12 +29,13 @@
           is_cancel Int8,
           PRIMARY KEY (msno)
       );
+```
 
-  </details> 
 - В созданную таблицу с помощью CLI загружен датасет transaction_v2
-  <details>
-    <summary><i>bash скрипт</i></summary>
-  
+
+#### bash скрипт
+
+```  
     ### bash-скрипт загрузки датасета
     
     ydb  `
@@ -48,7 +49,7 @@
     --null-value "" `
     --verbose `
     transactions_v2.csv
-  </details> 
+```
 - Создан трансфер данных с источником в YDB и приемником в Object Storage
   `s3a://final_task/transactions_v2.parquet`
   
