@@ -50,7 +50,7 @@
     transactions_v2.csv
   </details> 
 - Создан трансфер данных с источником в YDB и приемником в Object Storage
-  `s3a://etl-data-transform/transactions_v2.parquet`
+  `s3a://final_task/transactions_v2.parquet`
   
 #### Скриншоты
 ![Скриншот_1](.assets/task_1_1.jpg)
