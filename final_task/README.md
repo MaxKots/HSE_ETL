@@ -2,14 +2,16 @@
 
 ### Этапы проекта:
 
-- Установка и настройка инструментов командной строки: Yandex CLI и YDB CLI, включая настройку авторизации.
-- Создание базы данных в Yandex Database (YDB) и организация переноса данных в Yandex Object Storage (S3).
-- Развертывание и конфигурация Apache Airflow, интеграция с Yandex MetaDataHub и Yandex Data Processing.
-- Разработка PySpark-скриптов и создание DAG для автоматизации процессов обработки данных.
-- Работа с Apache Kafka®: настройка взаимодействия топиков Kafka и обработка данных через PySpark-задания в Yandex Data Processing (в процессе доработки).
-- Визуализация данных с использованием Yandex DataLens (в процессе реализации).
+- Установка и настройка инструментов командной строки: Yandex CLI и YDB CLI, включая настройку авторизации;
+- Создание базы данных в Yandex Database (YDB) и организация переноса данных в Yandex Object Storage (S3);
+- Развертывание и конфигурация Apache Airflow, интеграция с Yandex MetaDataHub и Yandex Data Processing;
+- Разработка PySpark-скриптов и создание DAG для автоматизации процессов обработки данных;
+- Работа с Apache Kafka®: настройка взаимодействия топиков Kafka и обработка данных через PySpark-задания в Yandex Data Processing (в процессе доработки);
+- Визуализация данных с использованием Yandex DataLens (в процессе доработки).
 
 ### Задание 1. Работа с Yandex DataTransfer
+
+[Ссылка на документацию](https://yandex.cloud/ru/docs/data-transfer/tutorials/ydb-to-object-storage)
 
 Создал табличку для данных с [kaggle](https://www.kaggle.com/datasets)
   <details>
@@ -55,3 +57,18 @@
 ![Скриншот_2](.assets/task_1_2.jpg)
 ![Скриншот_3](.assets/task_1_3.jpg)
 
+### Задание 2: Автоматизация работы с Yandex Data Processing при помощи Apache AirFlow
+
+[Ссылка на документацию](https://yandex.cloud/ru/docs/managed-airflow/tutorials/data-processing-automation)
+
+* Настроен Yandex MetaDataHub для централизованного управления метаданными;
+* Развернут и настроен Yandex Data Processing для выполнения распределённых вычислений;
+* Конфигурирован Apache Airflow для оркестрации ETL-процессов;
+* Разработан скрипт обработки данных, включающий:
+  + Приведение типов к заданному формату;
+  + Фильтрацию и удаление пустых строк.
+
+#### Скриншоты
+![Скриншот_1](.assets/task_2_1.jpg)
+![Скриншот_2](.assets/task_2_2.jpg)
+![Скриншот_3](.assets/task_2_3.jpg)
