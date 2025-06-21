@@ -183,5 +183,3 @@ spark.stop()
 
 #### Скриншоты
 ![Скриншот_1](.assets/task_2_1.jpg)
-![Скриншот_2](.assets/task_2_2.jpg)
-![Скриншот_3](.assets/task_2_3.jpg)
