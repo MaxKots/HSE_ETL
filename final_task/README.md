@@ -1,10 +1,13 @@
 # Итоговое задание ETL
 
-## Общая архитектура
+### Этапы проекта:
 
-- **Источник данных:** `transactions_v2.csv`  в Object Storage
-- **ETL-пайплайн:** Airflow → Dataproc (PySpark) → Kafka → PostgreSQL (Managed Service)
-- **Форматы:** CSV → Parquet → JSON → Kafka message → PostgreSQL
+- Установка и настройка инструментов командной строки: Yandex CLI и YDB CLI, включая настройку авторизации.
+- Создание базы данных в Yandex Database (YDB) и организация переноса данных в Yandex Object Storage (S3).
+- Развертывание и конфигурация Apache Airflow, интеграция с Yandex MetaDataHub и Yandex Data Processing.
+- Разработка PySpark-скриптов и создание DAG для автоматизации процессов обработки данных.
+- Работа с Apache Kafka®: настройка взаимодействия топиков Kafka и обработка данных через PySpark-задания в Yandex Data Processing (в процессе доработки).
+- Визуализация данных с использованием Yandex DataLens (в процессе реализации).
 
 ### Задание 1. Работа с Yandex DataTransfer
 
