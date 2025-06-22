@@ -15,7 +15,7 @@
 
 Создал табличку для данных с [kaggle](https://www.kaggle.com/datasets)
 
-####DDL скрипт
+#### DDL скрипт
 ```    
     CREATE TABLE transactions_v2 (
           msno Utf8,
@@ -183,3 +183,104 @@ spark.stop()
 
 #### Скриншоты
 ![Скриншот_1](.assets/task_2_1.jpg)
+
+
+### Задание 3: Работа с топиками Apache Kafka® с помощью PySpark-заданий в Yandex Data Processing
+
+[Ссылка на документацию](https://yandex.cloud/ru/docs/managed-kafka/tutorials/data-processing)
+
+Развертывание инфраструктуры:
+
+* Создан кластер Yandex Data Proc для выполнения распределённых вычислений;
+
+* Развёрнуты управляемые сервисы:
+	+ Managed Service for Kafka – для организации потоковой передачи данных.
+	+ Managed Service for PostgreSQL – для хранения и обработки структурированных данных.
+* Размещение и настройка скриптов в Object Storage:
+	+ Скрипт kafka-write.py:
+		- Загружает подготовленные данные из Parquet-файла (предварительно очищенные).
+		- Реализует поточную отправку в Kafka:
+		- Каждую секунду выбирает 100 случайных строк;
+		- Преобразует данные в JSON-формат;
+		- Отправляет в Kafka-топик dataproc-kafka-topic.
+	+ Скрипт kafka-read-stream.py:
+		- Осуществляет потоковый приём данных из Kafka:
+		- С периодичностью 10 секунд загружает новые записи из топика;
+		- Десериализует данные из JSON;
+		- Записывает их в таблицу transactions_stream в PostgreSQL.
+
+#### скрипт kafka-writ.py
+```python
+#!/usr/bin/env python3
+
+from pyspark.sql import SparkSession, Row
+from pyspark.sql.functions import to_json, col, struct
+
+def main():
+   spark = SparkSession.builder.appName("kafka-write").getOrCreate()
+
+   df = spark.createDataFrame([
+      Row(msg="Test message #1 from dataproc-cluster"),
+      Row(msg="Test message #2 from dataproc-cluster")
+   ])
+   df = df.select(to_json(struct([col(c).alias(c) for c in df.columns])).alias('value'))
+   df.write.format("kafka") \
+      .option("kafka.bootstrap.servers", "rc1b-4cu3phill90fiu4u.mdb.yandexcloud.net:9091") \
+      .option("topic", "dataproc-kafka-topic") \
+      .option("kafka.security.protocol", "SASL_SSL") \
+      .option("kafka.sasl.mechanism", "SCRAM-SHA-512") \
+      .option("kafka.sasl.jaas.config",
+              "org.apache.kafka.common.security.scram.ScramLoginModule required "
+              "username=user1 "
+              "password=password1 "
+              ";") \
+      .save()
+
+if __name__ == "__main__":
+   main()
+```
+
+
+#### Скрипт kafka-read-stream.py:
+``` python
+  #!/usr/bin/env python3
+
+from pyspark.sql import SparkSession, Row
+from pyspark.sql.functions import to_json, col, struct
+
+def main():
+   spark = SparkSession.builder.appName("kafka-read").getOrCreate()
+
+   query = spark.readStream.format("kafka")\
+      .option("kafka.bootstrap.servers", "rc1b-4cu3phill90fiu4u.mdb.yandexcloud.net:9091") \
+      .option("subscribe", "dataproc-kafka-topic") \
+      .option("kafka.security.protocol", "SASL_SSL") \
+      .option("kafka.sasl.mechanism", "SCRAM-SHA-512") \
+      .option("kafka.sasl.jaas.config",
+              "org.apache.kafka.common.security.scram.ScramLoginModule required "
+              "username=user1 "
+              "password=password1 "
+              ";") \
+      .option("startingOffsets", "earliest")\
+      .load()\
+      .selectExpr("CAST(value AS STRING)")\
+      .where(col("value").isNotNull())\
+      .writeStream\
+      .trigger(once=True)\
+      .queryName("received_messages")\
+      .format("memory")\
+      .start()
+
+   query.awaitTermination()
+
+   df = spark.sql("select value from received_messages")
+
+   df.write.format("text").save("s3a://target/kafka-read-output")
+
+if __name__ == "__main__":
+   main()
+```
+
+#### Запуск скриптов:
+
+Оба скрипта (kafka-write.py и kafka-read-stream.py) развернуты и выполняются в виде PySpark-заданий на кластере Data Proc.
